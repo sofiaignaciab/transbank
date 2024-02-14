@@ -76,14 +76,17 @@ app.get("/api/confirm-payment", async (req, res) => {
         "Content-Type": "application/json",
       },
     });
+    const responseData = await response.json();
+    console.log(responseData);
 
-    if (!response.ok) {
-      throw new Error(
-        `Error al confirmar la transacción ${response.statusText}`
-      );
+    if (responseData.status == "FAILED") {
+      res.redirect("http://localhost:5173/failed")
+      console.log('Transaccion rechazada')
+      return;
     }
     // Redirige al usuario a la URL de retorno
     res.redirect("http://localhost:5173/payment-end");
+    console.log('Transaccion aprobada')
   } catch (error) {
     console.error("Error:", error);
     res.status(error.statusCode || 500).json({ message: error.message });
